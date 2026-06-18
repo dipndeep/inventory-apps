@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -21,10 +22,35 @@ const iconMap = {
 };
 
 export default function Sidebar() {
+  const location = useLocation();
   const [openSubmenu, setOpenSubmenu] = useState(null);
+
+  // Auto-expand submenu if current path matches a subitem
+  useEffect(() => {
+    if (location.pathname.startsWith("/barang")) {
+      setOpenSubmenu("barang");
+    }
+  }, [location.pathname]);
 
   const toggleSubmenu = (id) => {
     setOpenSubmenu(openSubmenu === id ? null : id);
+  };
+
+  const isItemActive = (item) => {
+    if (item.hasSubmenu) {
+      return location.pathname.startsWith("/barang");
+    }
+    if (item.path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(item.path);
+  };
+
+  const isSubActive = (sub) => {
+    if (sub.path === "/barang" && location.pathname.startsWith("/barang/edit")) {
+      return true;
+    }
+    return location.pathname === sub.path;
   };
 
   return (
@@ -50,39 +76,57 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         {navigationItems.map((item) => {
           const Icon = iconMap[item.id];
-          return (
-            <div key={item.id}>
-              <div
-                className={`nav-item ${item.active ? "active" : ""} ${
-                  openSubmenu === item.id ? "open" : ""
-                }`}
-                onClick={() => item.hasSubmenu && toggleSubmenu(item.id)}
-                id={`nav-${item.id}`}
-              >
-                {Icon && <Icon className="nav-icon" />}
-                <span>{item.label}</span>
-                {item.hasSubmenu && (
+          const active = isItemActive(item);
+
+          if (item.hasSubmenu) {
+            return (
+              <div key={item.id}>
+                <div
+                  className={`nav-item ${active ? "active" : ""} ${
+                    openSubmenu === item.id ? "open" : ""
+                  }`}
+                  onClick={() => toggleSubmenu(item.id)}
+                  id={`nav-${item.id}`}
+                >
+                  {Icon && <Icon className="nav-icon" />}
+                  <span>{item.label}</span>
                   <ChevronRight className="nav-chevron" />
-                )}
-              </div>
-              {item.hasSubmenu && (
+                </div>
                 <div
                   className={`nav-subitems ${
                     openSubmenu === item.id ? "open" : ""
                   }`}
                 >
-                  {item.submenu.map((sub) => (
-                    <div
-                      key={sub.id}
-                      className="nav-subitem"
-                      id={`nav-${sub.id}`}
-                    >
-                      {sub.label}
-                    </div>
-                  ))}
+                  {item.submenu.map((sub) => {
+                    const subActive = isSubActive(sub);
+                    return (
+                      <Link
+                        key={sub.id}
+                        to={sub.path}
+                        className={`nav-subitem ${subActive ? "active" : ""}`}
+                        id={`nav-${sub.id}`}
+                        style={{ display: "block", textDecoration: "none" }}
+                      >
+                        {sub.label}
+                      </Link>
+                    );
+                  })}
                 </div>
-              )}
-            </div>
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={item.id}
+              to={item.path}
+              className={`nav-item ${active ? "active" : ""}`}
+              id={`nav-${item.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              {Icon && <Icon className="nav-icon" />}
+              <span>{item.label}</span>
+            </Link>
           );
         })}
       </nav>
@@ -90,11 +134,7 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="sidebar-footer">
         <div>Smart Inventory Dashboard</div>
-        <div>© 2026 All Rights Reserved</div>
-        <div style={{ marginTop: 8 }}>
-          Made with{" "}
-          <span style={{ color: "#f60974" }}>❤</span> by Peterdraw
-        </div>
+        <div>© 2026 DipNDeep</div>
       </div>
     </aside>
   );

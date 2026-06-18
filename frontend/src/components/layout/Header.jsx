@@ -4,9 +4,6 @@ import {
   MessageSquare,
   Gift,
   Settings,
-  CloudSun,
-  MapPin,
-  Calendar,
 } from "lucide-react";
 import { notificationCounts } from "../../data/mockData";
 
@@ -53,22 +50,3 @@ export default function Header() {
   );
 }
 
-export function DashboardTitleRow() {
-  return (
-    <div className="dashboard-title-row" id="dashboard-title-row">
-      <h1 className="dashboard-title">Dashboard</h1>
-      <div className="dashboard-title-right">
-        <div className="location-info">
-          <CloudSun size={18} />
-          <span>21°</span>
-          <MapPin size={14} />
-          <span>Jakarta, IDN</span>
-        </div>
-        <button className="filter-btn" id="btn-filter-periode">
-          <Calendar size={16} />
-          Filter Periode
-        </button>
-      </div>
-    </div>
-  );
-}

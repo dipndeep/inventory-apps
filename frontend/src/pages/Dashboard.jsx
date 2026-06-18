@@ -1,4 +1,5 @@
-import { DashboardTitleRow } from "../components/layout/Header";
+import PageHeader from "../components/ui/PageHeader";
+import { CloudSun, MapPin, Calendar } from "lucide-react";
 import MetricCard from "../components/dashboard/MetricCard";
 import CategoryPieChart from "../components/dashboard/CategoryPieChart";
 import StockFlowLineChart from "../components/dashboard/StockFlowLineChart";
@@ -9,7 +10,23 @@ export default function Dashboard() {
   return (
     <div id="dashboard-page">
       {/* Title Row */}
-      <DashboardTitleRow />
+      <PageHeader
+        title="Dashboard"
+        actions={
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div className="location-info">
+              <CloudSun size={18} />
+              <span>21°</span>
+              <MapPin size={14} />
+              <span>Jakarta, IDN</span>
+            </div>
+            <button className="filter-btn" id="btn-filter-periode">
+              <Calendar size={16} />
+              Filter Periode
+            </button>
+          </div>
+        }
+      />
 
       {/* Row 1: Key Metrics */}
       <div className="metrics-grid" id="metrics-grid">
