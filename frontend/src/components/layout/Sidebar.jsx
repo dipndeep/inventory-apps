@@ -8,7 +8,11 @@ import {
   ArrowUpFromLine,
   Settings,
   ChevronRight,
+  ChevronLeft,
   Zap,
+  Plus,
+  List,
+  History,
 } from "lucide-react";
 import { adminProfile, navigationItems } from "../../data/mockData";
 
@@ -21,7 +25,13 @@ const iconMap = {
   pengaturan: Settings,
 };
 
-export default function Sidebar() {
+const subIconMap = {
+  "add-new": Plus,
+  "item-list": List,
+  history: History,
+};
+
+export default function Sidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
@@ -54,7 +64,16 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sidebar" id="sidebar">
+    <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`} id="sidebar">
+      {/* Collapse Toggle Button */}
+      <button
+        className="sidebar-collapse-btn"
+        onClick={onToggle}
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+      </button>
+
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
@@ -63,78 +82,84 @@ export default function Sidebar() {
         <span className="sidebar-logo-text">Boltz</span>
       </div>
 
-      {/* Profile */}
-      <div className="sidebar-profile">
-        <div className="sidebar-avatar">{adminProfile.initials}</div>
-        <div className="sidebar-profile-name">
-          Hello, {adminProfile.name}
+      <div className="sidebar-body">
+        {/* Profile */}
+        <div className="sidebar-profile">
+          <div className="sidebar-avatar">{adminProfile.initials}</div>
+          <div className="sidebar-profile-name">
+            Hello, {adminProfile.name}
+          </div>
+          <div className="sidebar-profile-email">{adminProfile.email}</div>
         </div>
-        <div className="sidebar-profile-email">{adminProfile.email}</div>
-      </div>
 
-      {/* Navigation */}
-      <nav className="sidebar-nav">
-        {navigationItems.map((item) => {
-          const Icon = iconMap[item.id];
-          const active = isItemActive(item);
+        {/* Navigation */}
+        <nav className="sidebar-nav">
+          {navigationItems.map((item) => {
+            const Icon = iconMap[item.id];
+            const active = isItemActive(item);
 
-          if (item.hasSubmenu) {
+            if (item.hasSubmenu) {
+              return (
+                <div key={item.id} className="nav-item-wrapper">
+                  <div
+                    className={`nav-item ${active ? "active" : ""} ${
+                      openSubmenu === item.id ? "open" : ""
+                    }`}
+                    onClick={() => toggleSubmenu(item.id)}
+                    id={`nav-${item.id}`}
+                  >
+                    {Icon && <Icon className="nav-icon" />}
+                    <span>{item.label}</span>
+                    <ChevronRight className="nav-chevron" />
+                  </div>
+                  <div
+                    className={`nav-subitems ${
+                      openSubmenu === item.id ? "open" : ""
+                    }`}
+                  >
+                    <div className="nav-subitems-header">
+                      {item.label}
+                    </div>
+                    {item.submenu.map((sub) => {
+                      const subActive = isSubActive(sub);
+                      const SubIcon = subIconMap[sub.id];
+                      return (
+                        <Link
+                          key={sub.id}
+                          to={sub.path}
+                          className={`nav-subitem ${subActive ? "active" : ""}`}
+                          id={`nav-${sub.id}`}
+                        >
+                          {SubIcon && <SubIcon size={14} className="sub-nav-icon" />}
+                          <span>{sub.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
+
             return (
-              <div key={item.id}>
-                <div
-                  className={`nav-item ${active ? "active" : ""} ${
-                    openSubmenu === item.id ? "open" : ""
-                  }`}
-                  onClick={() => toggleSubmenu(item.id)}
-                  id={`nav-${item.id}`}
-                >
-                  {Icon && <Icon className="nav-icon" />}
-                  <span>{item.label}</span>
-                  <ChevronRight className="nav-chevron" />
-                </div>
-                <div
-                  className={`nav-subitems ${
-                    openSubmenu === item.id ? "open" : ""
-                  }`}
-                >
-                  {item.submenu.map((sub) => {
-                    const subActive = isSubActive(sub);
-                    return (
-                      <Link
-                        key={sub.id}
-                        to={sub.path}
-                        className={`nav-subitem ${subActive ? "active" : ""}`}
-                        id={`nav-${sub.id}`}
-                        style={{ display: "block", textDecoration: "none" }}
-                      >
-                        {sub.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
+              <Link
+                key={item.id}
+                to={item.path}
+                className={`nav-item ${active ? "active" : ""}`}
+                id={`nav-${item.id}`}
+                style={{ textDecoration: "none" }}
+              >
+                {Icon && <Icon className="nav-icon" />}
+                <span>{item.label}</span>
+              </Link>
             );
-          }
+          })}
+        </nav>
 
-          return (
-            <Link
-              key={item.id}
-              to={item.path}
-              className={`nav-item ${active ? "active" : ""}`}
-              id={`nav-${item.id}`}
-              style={{ textDecoration: "none" }}
-            >
-              {Icon && <Icon className="nav-icon" />}
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="sidebar-footer">
-        <div>Smart Inventory Dashboard</div>
-        <div>© 2026 DipNDeep</div>
+        {/* Footer */}
+        <div className="sidebar-footer">
+          <div>Smart Inventory Dashboard</div>
+          <div>© 2026 DipNDeep</div>
+        </div>
       </div>
     </aside>
   );
