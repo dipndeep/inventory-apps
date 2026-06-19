@@ -2,9 +2,11 @@ import { useState } from "react";
 import { User, Bell, Shield, Info, Save, Moon, Check } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import { adminProfile } from "../data/mockData";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Pengaturan() {
   const [activeTab, setActiveTab] = useState("profile");
+  const { isDarkMode, setIsDarkMode } = useTheme();
   const [profile, setProfile] = useState({
     name: adminProfile.name,
     fullName: adminProfile.fullName,
@@ -14,7 +16,6 @@ export default function Pengaturan() {
   
   const [pref, setPref] = useState({
     language: "id",
-    darkMode: false,
     notifyCritical: true,
     notifyWeekly: false,
     notifyBrowser: true,
@@ -172,8 +173,8 @@ export default function Pengaturan() {
                   <label className="switch-toggle">
                     <input
                       type="checkbox"
-                      checked={pref.darkMode}
-                      onChange={(e) => setPref({ ...pref, darkMode: e.target.checked })}
+                      checked={isDarkMode}
+                      onChange={(e) => setIsDarkMode(e.target.checked)}
                       id="setting-dark-mode"
                     />
                     <span className="switch-slider"></span>
