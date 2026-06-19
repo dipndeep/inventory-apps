@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Save, X } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import { kategoriList, barangList } from "../data/mockData";
+import Select from "../components/ui/Select";
 
 export default function BarangForm() {
   const navigate = useNavigate();
@@ -89,19 +90,20 @@ export default function BarangForm() {
 
             <div className="form-group">
               <label className="form-label">Kategori</label>
-              <select
-                className={`form-input ${errors.kategori_id ? "error" : ""}`}
+              <Select
+                className={`${errors.kategori_id ? "error" : ""}`}
                 value={form.kategori_id}
-                onChange={(e) => handleChange("kategori_id", e.target.value)}
+                onChange={(val) => handleChange("kategori_id", val)}
+                options={[
+                  { value: "", label: "Pilih Kategori" },
+                  ...kategoriList.map((k) => ({
+                    value: k.id,
+                    label: k.nama_kategori,
+                  })),
+                ]}
+                placeholder="Pilih Kategori"
                 id="input-kategori"
-              >
-                <option value="">Pilih Kategori</option>
-                {kategoriList.map((k) => (
-                  <option key={k.id} value={k.id}>
-                    {k.nama_kategori}
-                  </option>
-                ))}
-              </select>
+              />
               {errors.kategori_id && <span className="form-error">{errors.kategori_id}</span>}
             </div>
 

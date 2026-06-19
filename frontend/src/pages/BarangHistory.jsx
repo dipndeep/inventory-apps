@@ -5,6 +5,7 @@ import DataTable from "../components/ui/DataTable";
 import Pagination from "../components/ui/Pagination";
 import StatusBadge from "../components/ui/StatusBadge";
 import { barangHistoryList } from "../data/mockData";
+import Select from "../components/ui/Select";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -66,21 +67,22 @@ export default function BarangHistory() {
               id="search-history"
             />
           </div>
-          <select
+          <Select
             className="table-filter-select"
             value={filterAksi}
-            onChange={(e) => {
-              setFilterAksi(e.target.value);
+            onChange={(val) => {
+              setFilterAksi(val);
               setCurrentPage(1);
             }}
+            options={[
+              { value: "", label: "Semua Aksi" },
+              { value: "Tambah", label: "Tambah" },
+              { value: "Edit", label: "Edit" },
+              { value: "Hapus", label: "Hapus" },
+              { value: "Keluar", label: "Keluar" },
+            ]}
             id="filter-aksi"
-          >
-            <option value="">Semua Aksi</option>
-            <option value="Tambah">Tambah</option>
-            <option value="Edit">Edit</option>
-            <option value="Hapus">Hapus</option>
-            <option value="Keluar">Keluar</option>
-          </select>
+          />
         </div>
       </div>
 

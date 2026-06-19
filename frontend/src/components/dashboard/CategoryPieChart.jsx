@@ -4,8 +4,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { categoryStockData } from "../../data/mockData";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function CategoryPieChart() {
+  const { isDarkMode } = useTheme();
+
   // Transform data for RadialBarChart — reverse order so largest is outermost
   const chartData = [...categoryStockData]
     .reverse()
@@ -48,7 +51,7 @@ export default function CategoryPieChart() {
               endAngle={-30}
             >
               <RadialBar
-                background={{ fill: "#f0f2f8" }}
+                background={{ fill: isDarkMode ? "#2a2e3d" : "#f0f2f8" }}
                 dataKey="uv"
                 cornerRadius={8}
               />

@@ -5,6 +5,7 @@ import DataTable from "../components/ui/DataTable";
 import Pagination from "../components/ui/Pagination";
 import Modal from "../components/ui/Modal";
 import { stokKeluarList as initialData, barangList } from "../data/mockData";
+import Select from "../components/ui/Select";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -151,19 +152,20 @@ export default function StokKeluar() {
           {error && <div className="form-error-summary">{error}</div>}
           <div className="form-group">
             <label className="form-label">Barang</label>
-            <select
+            <Select
               className="form-input"
               value={form.barang_id}
-              onChange={(e) => setForm({ ...form, barang_id: e.target.value })}
+              onChange={(val) => setForm({ ...form, barang_id: val })}
+              options={[
+                { value: "", label: "Pilih Barang" },
+                ...barangList.map((b) => ({
+                  value: b.id,
+                  label: `${b.kode_barang} — ${b.nama_barang} (Stok: ${b.stok_sekarang})`,
+                })),
+              ]}
+              placeholder="Pilih Barang"
               id="input-barang-keluar"
-            >
-              <option value="">Pilih Barang</option>
-              {barangList.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.kode_barang} — {b.nama_barang} (Stok: {b.stok_sekarang})
-                </option>
-              ))}
-            </select>
+            />
           </div>
           <div className="form-group">
             <label className="form-label">Jumlah</label>

@@ -3,6 +3,7 @@ import { User, Bell, Shield, Info, Save, Moon, Check } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import { adminProfile } from "../data/mockData";
 import { useTheme } from "../context/ThemeContext";
+import Select from "../components/ui/Select";
 
 export default function Pengaturan() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -155,15 +156,16 @@ export default function Pengaturan() {
 
               <div className="form-group">
                 <label className="form-label">Bahasa Sistem</label>
-                <select
+                <Select
                   className="form-input"
                   value={pref.language}
-                  onChange={(e) => setPref({ ...pref, language: e.target.value })}
+                  onChange={(val) => setPref({ ...pref, language: val })}
+                  options={[
+                    { value: "id", label: "Bahasa Indonesia" },
+                    { value: "en", label: "English (US)" },
+                  ]}
                   id="setting-language"
-                >
-                  <option value="id">Bahasa Indonesia</option>
-                  <option value="en">English (US)</option>
-                </select>
+                />
               </div>
 
               <div className="form-group">

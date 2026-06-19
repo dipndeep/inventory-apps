@@ -6,6 +6,7 @@ import DataTable from "../components/ui/DataTable";
 import Pagination from "../components/ui/Pagination";
 import StatusBadge, { getStockStatus } from "../components/ui/StatusBadge";
 import { barangList as initialData, kategoriList } from "../data/mockData";
+import Select from "../components/ui/Select";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -122,22 +123,22 @@ export default function BarangList() {
               id="search-barang"
             />
           </div>
-          <select
+          <Select
             className="table-filter-select"
             value={filterKategori}
-            onChange={(e) => {
-              setFilterKategori(e.target.value);
+            onChange={(val) => {
+              setFilterKategori(val);
               setCurrentPage(1);
             }}
+            options={[
+              { value: "", label: "Semua Kategori" },
+              ...kategoriList.map((k) => ({
+                value: k.nama_kategori,
+                label: k.nama_kategori,
+              })),
+            ]}
             id="filter-kategori"
-          >
-            <option value="">Semua Kategori</option>
-            {kategoriList.map((k) => (
-              <option key={k.id} value={k.nama_kategori}>
-                {k.nama_kategori}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
 

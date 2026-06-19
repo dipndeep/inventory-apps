@@ -4,6 +4,7 @@ import { CloudSun, MapPin, Calendar, Check } from "lucide-react";
 import MetricCard from "../components/dashboard/MetricCard";
 import CategoryPieChart from "../components/dashboard/CategoryPieChart";
 import StockFlowLineChart from "../components/dashboard/StockFlowLineChart";
+import StockInsightsCard from "../components/dashboard/StockInsightsCard";
 import WarehouseCard from "../components/dashboard/WarehouseCard";
 import { metricsData, warehouseData } from "../data/mockData";
 
@@ -177,9 +178,12 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Row 2: Charts */}
+      {/* Row 2: Charts & Insights */}
       <div className="charts-row" id="charts-row">
-        <CategoryPieChart />
+        <div className="charts-row-left">
+          <CategoryPieChart />
+          <StockInsightsCard />
+        </div>
         <StockFlowLineChart />
       </div>
 

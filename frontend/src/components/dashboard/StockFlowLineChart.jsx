@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { stockFlowData, stockFlowCategories } from "../../data/mockData";
+import Select from "../ui/Select";
+import { useTheme } from "../../context/ThemeContext";
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
@@ -39,11 +41,12 @@ function CustomTooltip({ active, payload, label }) {
 }
 
 export default function StockFlowLineChart() {
+  const { isDarkMode } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [period, setPeriod] = useState("weekly");
 
   return (
-    <div className="card chart-card" id="stock-flow-chart">
+    <div className="card chart-card" id="stock-flow-chart" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div className="chart-card-header">
         <div>
           <div className="chart-card-title">Aliran Masuk & Keluar</div>
@@ -56,94 +59,114 @@ export default function StockFlowLineChart() {
             display: "flex",
             alignItems: "center",
             gap: "16px",
-            flexWrap: "wrap",
+            flexWrap: "nowrap",
           }}
         >
-          <div className="chart-filters">
+          <div className="chart-segmented-control">
             {stockFlowCategories.map((cat) => (
-              <label
+              <button
                 key={cat.id}
-                className={`chart-filter-radio ${
-                  selectedCategory === cat.id ? "checked" : ""
+                type="button"
+                className={`chart-segment-btn ${
+                  selectedCategory === cat.id ? "active" : ""
                 }`}
+                onClick={() => setSelectedCategory(cat.id)}
               >
-                <input
-                  type="radio"
-                  name="category-filter"
-                  checked={selectedCategory === cat.id}
-                  onChange={() => setSelectedCategory(cat.id)}
-                />
                 {cat.label}
-              </label>
+              </button>
             ))}
           </div>
-          <select
+          <Select
             className="chart-period-select"
             value={period}
-            onChange={(e) => setPeriod(e.target.value)}
+            onChange={setPeriod}
+            options={[
+              { value: "weekly", label: "Mingguan (2026)" },
+              { value: "monthly", label: "Bulanan" },
+              { value: "yearly", label: "Tahunan" },
+            ]}
             id="period-select"
-          >
-            <option value="weekly">Mingguan (2026)</option>
-            <option value="monthly">Bulanan</option>
-            <option value="yearly">Tahunan</option>
-          </select>
+          />
         </div>
       </div>
 
-      <div style={{ width: "100%", height: 280 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={stockFlowData}
-            margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="5 5"
-              stroke="#f0f2f8"
-              vertical={false}
-            />
-            <XAxis
-              dataKey="week"
-              tick={{ fill: "#8a90a2", fontSize: 12 }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <YAxis
-              tick={{ fill: "#8a90a2", fontSize: 12 }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(v) => (v >= 1000 ? `${v / 1000}k` : v)}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="masuk"
-              stroke="#3f62e7"
-              strokeWidth={3}
-              dot={false}
-              activeDot={{
-                r: 6,
-                fill: "#3f62e7",
-                stroke: "#fff",
-                strokeWidth: 3,
-              }}
-              name="Stok Masuk"
-            />
-            <Line
-              type="monotone"
-              dataKey="keluar"
-              stroke="#e07a5f"
-              strokeWidth={3}
-              dot={false}
-              activeDot={{
-                r: 6,
-                fill: "#e07a5f",
-                stroke: "#fff",
-                strokeWidth: 3,
-              }}
-              name="Stok Keluar"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <div style={{ width: "100%", flex: 1, minHeight: 320, position: "relative" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={stockFlowData}
+              margin={{ top: 15, right: 15, left: 15, bottom: 15 }}
+            >
+              <CartesianGrid
+                strokeDasharray="5 5"
+                stroke={isDarkMode ? "#2a2e3d" : "#f0f2f8"}
+                vertical={false}
+              />
+              <XAxis
+                dataKey="week"
+                tick={{ fill: "#8a90a2", fontSize: 11 }}
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                height={50}
+                label={{
+                  value: "Periode Waktu",
+                  position: "insideBottom",
+                  offset: -5,
+                  fill: isDarkMode ? "#a3a9be" : "#5c6275",
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              />
+              <YAxis
+                tick={{ fill: "#8a90a2", fontSize: 11 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) => (v >= 1000 ? `${v / 1000}k` : v)}
+                width={75}
+                label={{
+                  value: "Jumlah Barang (Unit)",
+                  angle: -90,
+                  position: "insideLeft",
+                  offset: -10,
+                  fill: isDarkMode ? "#a3a9be" : "#5c6275",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  style: { textAnchor: "middle" },
+                }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="masuk"
+                stroke="#3f62e7"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{
+                  r: 6,
+                  fill: "#3f62e7",
+                  stroke: isDarkMode ? "#1a1d2c" : "#fff",
+                  strokeWidth: 3,
+                }}
+                name="Stok Masuk"
+              />
+              <Line
+                type="monotone"
+                dataKey="keluar"
+                stroke="#e07a5f"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{
+                  r: 6,
+                  fill: "#e07a5f",
+                  stroke: isDarkMode ? "#1a1d2c" : "#fff",
+                  strokeWidth: 3,
+                }}
+                name="Stok Keluar"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
